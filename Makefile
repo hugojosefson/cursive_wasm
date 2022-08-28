@@ -6,7 +6,7 @@ clean:
 	rm -rf pkg
 
 fmt:
-	deno fmt
+	deno fmt --ignore=target
 	cargo fmt
 
 build:

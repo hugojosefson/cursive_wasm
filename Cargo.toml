@@ -2,7 +2,7 @@
 authors = ["Hugo Josefson <hugo@josefson.org>"]
 categories = ["command-line-interface", "gui"]
 description = "WASM bindings for Cursive"
-edition = "2018"
+edition = "2021"
 keywords = ["wasm", "webassembly", "TUI", "UI"]
 license = "MIT"
 name = "cursive_wasm"
@@ -11,12 +11,14 @@ repository = "https://github.com/hugojosefson/cursive_wasm"
 version = "0.0.1"
 
 [lib]
+name = "cursive_wasm"
 crate-type = ["cdylib", "rlib"]
 
 [features]
 default = ["console_error_panic_hook"]
 
 [dependencies]
+cursive_core = "0.3.4"
 wasm-bindgen = "0.2.63"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
