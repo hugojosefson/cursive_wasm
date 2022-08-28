@@ -1,8 +1,14 @@
 [package]
-name = "cursive-wasm"
-version = "0.1.0"
 authors = ["Hugo Josefson <hugo@josefson.org>"]
+categories = ["command-line-interface", "gui"]
+description = "WASM bindings for Cursive"
 edition = "2018"
+keywords = ["wasm", "webassembly", "TUI", "UI"]
+license = "MIT"
+name = "cursive_wasm"
+readme = "README.md"
+repository = "https://github.com/hugojosefson/cursive_wasm"
+version = "0.0.1"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
