@@ -1,7 +1,8 @@
-use crate::backend;
-use crate::event::Event;
-use crate::theme::{Color, ColorPair, Effect};
-use crate::Vec2;
+use cursive_core::backend;
+use cursive_core::event::Event;
+use cursive_core::theme::{Color, ColorPair, Effect};
+use cursive_core::Vec2;
+use wasm_bindgen::prelude::*;
 
 pub struct Backend {}
 
@@ -17,15 +18,13 @@ impl Backend {
 }
 
 impl backend::Backend for Backend {
-    fn name(&self) -> &str {
-        "wasm"
+    fn poll_event(&mut self) -> Option<Event> {
+        self.parse_next()
     }
 
     fn set_title(&mut self, _title: String) {}
 
-    fn set_color(&self, color: ColorPair) -> ColorPair {
-        color
-    }
+    fn refresh(&mut self) {}
 
     fn has_colors(&self) -> bool {
         true
@@ -35,17 +34,19 @@ impl backend::Backend for Backend {
         (80, 24).into()
     }
 
-    fn clear(&self, _color: Color) {}
-
-    fn refresh(&mut self) {}
-
     fn print_at(&self, _pos: Vec2, _text: &str) {}
 
-    fn poll_event(&mut self) -> Option<Event> {
-        self.parse_next()
+    fn clear(&self, _color: Color) {}
+
+    fn set_color(&self, color: ColorPair) -> ColorPair {
+        color
     }
 
     fn set_effect(&self, _effect: Effect) {}
 
     fn unset_effect(&self, _effect: Effect) {}
+
+    fn name(&self) -> &str {
+        "wasm"
+    }
 }

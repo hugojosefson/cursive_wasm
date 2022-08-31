@@ -1,4 +1,6 @@
-use crate::{backend, backends, Cursive, CursiveRunner};
+use crate::backends;
+use cursive_core::{backend, Cursive, CursiveRunner};
+use wasm_bindgen::prelude::*;
 
 type Initializer = dyn FnMut() -> Result<Box<dyn backend::Backend>, Box<dyn std::error::Error>>;
 
@@ -12,6 +14,7 @@ type Initializer = dyn FnMut() -> Result<Box<dyn backend::Backend>, Box<dyn std:
 ///
 /// It implements `DerefMut<Target=Cursive>`, so you can use it just like a
 /// regular `Cursive` object.
+#[wasm_bindgen]
 pub struct CursiveRunnable {
     siv: Cursive,
     backend_init: Box<Initializer>,

@@ -19,7 +19,8 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 cursive_core = "0.3.4"
-wasm-bindgen = "0.2.63"
+wasm-bindgen = { version = "0.2.63", features = ["serde-serialize"] }
+js-sys = "0.3.59"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
