@@ -11,16 +11,16 @@ fmt:
 
 build: pkg/cursive_wasm.js pkg/cursive_wasm.d.ts pkg/cursive_wasm_bg.wasm pkg/cursive_wasm_bg.wasm.d.ts pkg/mod.ts
 
-pkg/cursive_wasm.d.ts: src/lib.rs pkg/cursive_wasm.js
+pkg/cursive_wasm.d.ts: $(wildcard src/**/*) pkg/cursive_wasm.js
 
-pkg/cursive_wasm_bg.wasm: src/lib.rs pkg/cursive_wasm.js
+pkg/cursive_wasm_bg.wasm: $(wildcard src/**/*) pkg/cursive_wasm.js
 
-pkg/cursive_wasm_bg.wasm.d.ts: src/lib.rs pkg/cursive_wasm.js
+pkg/cursive_wasm_bg.wasm.d.ts: $(wildcard src/**/*) pkg/cursive_wasm.js
 
 pkg/mod.ts: src/mod.ts
 	sed -E 's|\.\./pkg/|./|g' < src/mod.ts > pkg/mod.ts
 
-pkg/cursive_wasm.js: Makefile Cargo.toml Cargo.lock src/lib.rs
+pkg/cursive_wasm.js: Makefile Cargo.toml Cargo.lock $(wildcard src/**/*)
 	wasm-pack build --dev --target deno
 
 run: pkg/cursive_wasm_bg.wasm pkg/mod.ts
@@ -30,16 +30,20 @@ watch-run:
 	make watch WATCHMAKE=run
 
 watch: Makefile /usr/bin/inotifywait
-	# Watch all files mentioned as dependencies in Makefile
-	@phonies_regex="$$(cat Makefile | grep -E '^\.PHONY: ' | sed -E 's/.*: //' | sed -E 's/ /|/g')"; \
-	files="$$(cat Makefile | grep -E '^[a-z_]+.*:' | sed -E 's/[: ]+/\n/g' | sort -u | grep -vE '^$$' | grep -vE \($${phonies_regex}\))"; \
-	echo "\n----------------------------------------------------"; \
-	echo "Watching files:\n\n$${files}"; \
+	@bash -c 'hr="------------------------------------------------------------------------------------------------"; \
+    watch_files=(src pkg Makefile Cargo.toml Cargo.lock); \
+    mkdir -p pkg; \
+	printf -- "\n$${hr}\n"; \
 	while true; do \
-  		echo "\n----------------------------------------------------"; \
+		clear; \
+  		printf -- "$${hr}\n"; \
 		make $(WATCHMAKE); \
-		echo "$${files}" | inotifywait --fromfile=- --quiet --event close_write ; \
-	done
+  		printf -- "\n$${hr}\n"; \
+		printf -- "Watching files: $${watch_files[*]}\n"; \
+		printf -- "$${hr}\n"; \
+		inotifywait --quiet --event close_write --recursive $${watch_files[@]}; \
+		sleep 1; \
+	done'
 
 /usr/bin/inotifywait:
 	sudo apt install -y inotify-tools
