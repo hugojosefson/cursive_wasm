@@ -21,9 +21,9 @@ pkg/mod.ts: src/mod.ts
 	sed -E 's|\.\./pkg/|./|g' < src/mod.ts > pkg/mod.ts
 
 pkg/cursive_wasm.js: Makefile Cargo.toml Cargo.lock $(wildcard src/**/*)
-	wasm-pack build --dev --target deno
+	RUST_BACKTRACE=1 wasm-pack build --dev --target deno
 
-run: pkg/cursive_wasm_bg.wasm pkg/mod.ts
+run: pkg/cursive_wasm_bg.wasm pkg/cursive_wasm.js pkg/mod.ts
 	deno run --allow-read=pkg/cursive_wasm_bg.wasm pkg/mod.ts
 
 watch-run:
