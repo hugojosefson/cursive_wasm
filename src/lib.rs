@@ -4,18 +4,8 @@
 mod utils;
 
 use crate::backends::wasm::CursiveBackend;
-use wasm_bindgen::prelude::*;
-
 use crate::utils::set_panic_hook;
-
-/**
- * This function is exported from the main WASM module.
- */
-#[wasm_bindgen(start)]
-pub fn main() -> Result<(), JsValue> {
-    set_panic_hook();
-    Ok(())
-}
+use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -30,6 +20,7 @@ pub mod backends;
  */
 #[wasm_bindgen(js_name = "doSomethingWithMyBackend")]
 pub fn do_something_with_my_backend(backend: &CursiveBackend) {
+    set_panic_hook();
     backend.set_raw(true);
     backend.print("Hello from Rust!");
     backend.set_raw(false);
