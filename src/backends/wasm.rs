@@ -14,6 +14,7 @@ interface CursiveBackend {
     pollEvent(): string;
     hasColors(): boolean;
     screenSize(): Vec2;
+    setTitle(title: string): void;
 }
 "#;
 
@@ -45,6 +46,9 @@ extern "C" {
 
     #[wasm_bindgen(method, js_name = "screenSize")]
     pub fn screen_size(this: &CursiveBackend) -> Vec2;
+
+    #[wasm_bindgen(method, js_name = "setTitle")]
+    pub fn set_title(this: &CursiveBackend, title: &str);
 }
 
 #[wasm_bindgen]
@@ -78,6 +82,11 @@ impl Cursive {
     pub fn check_my_screen_size(&self) -> Vec2 {
         self.backend.screen_size()
     }
+
+    #[wasm_bindgen(js_name = "callMe")]
+    pub fn call_me(&self) {
+        self.backend.set_title("New title!");
+    }
 }
 
 impl Drop for Cursive {
@@ -86,6 +95,9 @@ impl Drop for Cursive {
     }
 }
 
+/**
+ * cursive_core will call here, and we should forward the call to the JavaScript implementation of CursiveBackend.
+ */
 impl cursive_core::backend::Backend for Cursive {
     fn has_colors(&self) -> bool {
         self.backend.has_colors()
@@ -104,8 +116,8 @@ impl cursive_core::backend::Backend for Cursive {
         }
     }
 
-    fn set_title(&mut self, _title: String) {
-        unimplemented!()
+    fn set_title(&mut self, title: String) {
+        self.backend.set_title(&title);
     }
 
     fn refresh(&mut self) {

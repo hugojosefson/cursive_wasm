@@ -1,5 +1,5 @@
 // @deno-types="../../pkg/cursive_wasm.d.ts"
-import {Cursive, CursiveBackend, Vec2} from "../../pkg/cursive_wasm.js";
+import { Cursive, CursiveBackend, Vec2 } from "../../pkg/cursive_wasm.js";
 
 class CursiveBackendImpl implements CursiveBackend {
   print(s: string): void {
@@ -21,9 +21,12 @@ class CursiveBackendImpl implements CursiveBackend {
   }
 
   screenSize(): Vec2 {
-    return new Vec2(88,240);
+    return new Vec2(88, 240);
   }
 
+  setTitle(title: string): void {
+    console.log(`CursiveBackendImpl: setTitle(${title})`);
+  }
 }
 
 const backend: CursiveBackend = new CursiveBackendImpl();
@@ -35,3 +38,4 @@ const haveColors = wasmCursive.checkMyColors();
 console.log(`haveColors: ${haveColors}`);
 const screenSize = wasmCursive.checkMyScreenSize();
 console.log(`screenSize: ${screenSize.x}x${screenSize.y}`);
+wasmCursive.callMe();
