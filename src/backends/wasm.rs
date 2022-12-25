@@ -1,5 +1,4 @@
 use crate::utils::set_panic_hook;
-use cursive_core::Vec2;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -92,7 +91,7 @@ impl cursive_core::backend::Backend for Cursive {
         self.backend.has_colors()
     }
 
-    fn screen_size(&self) -> Vec2 {
+    fn screen_size(&self) -> cursive_core::Vec2 {
         self.backend.screen_size().into()
     }
 
@@ -113,7 +112,7 @@ impl cursive_core::backend::Backend for Cursive {
         unimplemented!()
     }
 
-    fn print_at(&self, _pos: Vec2, _text: &str) {
+    fn print_at(&self, _pos: cursive_core::Vec2, _text: &str) {
         unimplemented!()
     }
 
@@ -135,21 +134,21 @@ impl cursive_core::backend::Backend for Cursive {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-#[serde(remote = "Vec2")]
+#[serde(remote = "cursive_core::Vec2")]
 #[wasm_bindgen]
 pub struct SerializableVec2 {
     pub x: usize,
     pub y: usize,
 }
 
-impl From<SerializableVec2> for Vec2 {
+impl From<SerializableVec2> for cursive_core::Vec2 {
     fn from(vec2: SerializableVec2) -> Self {
-        Vec2::new(vec2.x, vec2.y)
+        cursive_core::Vec2::new(vec2.x, vec2.y)
     }
 }
 
-impl From<Vec2> for SerializableVec2 {
-    fn from(vec2: Vec2) -> Self {
+impl From<cursive_core::Vec2> for SerializableVec2 {
+    fn from(vec2: cursive_core::Vec2) -> Self {
         SerializableVec2 {
             x: vec2.x,
             y: vec2.y,
