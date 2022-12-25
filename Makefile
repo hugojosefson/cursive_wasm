@@ -9,7 +9,7 @@ fmt:
 	deno fmt --ignore=target,pkg
 	cargo fmt
 
-build: pkg/cursive_wasm.js pkg/cursive_wasm.d.ts pkg/cursive_wasm_bg.wasm pkg/cursive_wasm_bg.wasm.d.ts pkg/mod.ts
+build: pkg/cursive_wasm.js pkg/cursive_wasm.d.ts pkg/cursive_wasm_bg.wasm pkg/cursive_wasm_bg.wasm.d.ts pkg/demo/example-backend-implemented-in-ts.ts
 
 pkg/cursive_wasm.d.ts: $(wildcard src/**/*) pkg/cursive_wasm.js
 
@@ -17,8 +17,9 @@ pkg/cursive_wasm_bg.wasm: $(wildcard src/**/*) pkg/cursive_wasm.js
 
 pkg/cursive_wasm_bg.wasm.d.ts: $(wildcard src/**/*) pkg/cursive_wasm.js
 
-pkg/mod.ts: src/mod.ts
-	sed -E 's|\.\./pkg/|./|g' < src/mod.ts > pkg/mod.ts
+pkg/demo/example-backend-implemented-in-ts.ts: Makefile src/demo/example-backend-implemented-in-ts.ts
+	mkdir -p pkg/demo
+	sed -E 's|\.\./pkg/||g' < src/demo/example-backend-implemented-in-ts.ts > pkg/demo/example-backend-implemented-in-ts.ts
 
 pkg/cursive_wasm.js: target/tools/bin/wasm-pack Makefile Cargo.toml Cargo.lock $(wildcard src/**/*)
 	RUST_BACKTRACE=1 target/tools/bin/wasm-pack build --dev --target deno
@@ -26,8 +27,8 @@ pkg/cursive_wasm.js: target/tools/bin/wasm-pack Makefile Cargo.toml Cargo.lock $
 target/tools/bin/wasm-pack:
 	cargo install --git=https://github.com/printfn/wasm-pack --branch=fix-binaryen --root=target/tools wasm-pack
 
-run: pkg/cursive_wasm_bg.wasm pkg/cursive_wasm.js pkg/mod.ts
-	deno run --allow-read=pkg/cursive_wasm_bg.wasm pkg/mod.ts
+run: pkg/cursive_wasm_bg.wasm pkg/cursive_wasm.js pkg/demo/example-backend-implemented-in-ts.ts
+	deno run --allow-read=pkg/cursive_wasm_bg.wasm pkg/demo/example-backend-implemented-in-ts.ts
 
 watch-run:
 	make watch WATCHMAKE=run
