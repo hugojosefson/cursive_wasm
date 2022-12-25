@@ -1,5 +1,5 @@
 // @deno-types="../../pkg/cursive_wasm.d.ts"
-import {Cursive, CursiveBackend, SerializableVec2} from "../../pkg/cursive_wasm.js";
+import {Cursive, CursiveBackend, Vec2} from "../../pkg/cursive_wasm.js";
 
 class CursiveBackendImpl implements CursiveBackend {
   print(s: string): void {
@@ -20,8 +20,8 @@ class CursiveBackendImpl implements CursiveBackend {
     return "SOME_EVENT";
   }
 
-  screenSize(): SerializableVec2 {
-    return new SerializableVec2(88,240);
+  screenSize(): Vec2 {
+    return new Vec2(88,240);
   }
 
 }

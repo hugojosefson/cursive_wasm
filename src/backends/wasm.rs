@@ -13,7 +13,7 @@ interface CursiveBackend {
     print(s: string): void;
     pollEvent(): string;
     hasColors(): boolean;
-    screenSize(): SerializableVec2;
+    screenSize(): Vec2;
 }
 "#;
 
@@ -44,7 +44,7 @@ extern "C" {
     pub fn has_colors(this: &CursiveBackend) -> bool;
 
     #[wasm_bindgen(method, js_name = "screenSize")]
-    pub fn screen_size(this: &CursiveBackend) -> SerializableVec2;
+    pub fn screen_size(this: &CursiveBackend) -> Vec2;
 }
 
 #[wasm_bindgen]
@@ -75,7 +75,7 @@ impl Cursive {
     }
 
     #[wasm_bindgen(js_name = "checkMyScreenSize")]
-    pub fn check_my_screen_size(&self) -> SerializableVec2 {
+    pub fn check_my_screen_size(&self) -> Vec2 {
         self.backend.screen_size()
     }
 }
@@ -136,20 +136,20 @@ impl cursive_core::backend::Backend for Cursive {
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(remote = "cursive_core::Vec2")]
 #[wasm_bindgen]
-pub struct SerializableVec2 {
+pub struct Vec2 {
     pub x: usize,
     pub y: usize,
 }
 
-impl From<SerializableVec2> for cursive_core::Vec2 {
-    fn from(vec2: SerializableVec2) -> Self {
+impl From<Vec2> for cursive_core::Vec2 {
+    fn from(vec2: Vec2) -> Self {
         cursive_core::Vec2::new(vec2.x, vec2.y)
     }
 }
 
-impl From<cursive_core::Vec2> for SerializableVec2 {
+impl From<cursive_core::Vec2> for Vec2 {
     fn from(vec2: cursive_core::Vec2) -> Self {
-        SerializableVec2 {
+        Vec2 {
             x: vec2.x,
             y: vec2.y,
         }
@@ -158,7 +158,7 @@ impl From<cursive_core::Vec2> for SerializableVec2 {
 
 // SerializableVec2 constructor
 #[wasm_bindgen]
-impl SerializableVec2 {
+impl Vec2 {
     #[wasm_bindgen(constructor)]
     pub fn new(x: usize, y: usize) -> Self {
         Self { x, y }
