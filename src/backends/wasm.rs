@@ -19,6 +19,7 @@ interface CursiveBackend {
     printAt(pos: Vec2, s: string): void;
     clear(color: Color): void;
     setColor(color: ColorPair): ColorPair;
+    setEffect(effect: Effect): void;
 }
 "#;
 
@@ -64,7 +65,12 @@ extern "C" {
     pub fn clear(this: &CursiveBackend, color: Color);
 
     #[wasm_bindgen(method, js_name = "setColor")]
+    #[allow(non_snake_case)]
     pub fn set_color(this: &CursiveBackend, colorPair: ColorPair) -> ColorPair;
+
+    #[wasm_bindgen(method, js_name = "setEffect")]
+    pub fn set_effect(this: &CursiveBackend, effect: Effect);
+
 }
 
 #[wasm_bindgen]
@@ -121,6 +127,8 @@ impl Cursive {
                 b: 60,
             },
         });
+        self.backend
+            .set_effect(cursive_core::theme::Effect::Bold.into());
     }
 }
 
@@ -171,8 +179,8 @@ impl cursive_core::backend::Backend for Cursive {
         self.backend.set_color(color.into()).into()
     }
 
-    fn set_effect(&self, _effect: cursive_core::theme::Effect) {
-        unimplemented!()
+    fn set_effect(&self, effect: cursive_core::theme::Effect) {
+        self.backend.set_effect(effect.into());
     }
 
     fn unset_effect(&self, _effect: cursive_core::theme::Effect) {
@@ -272,5 +280,49 @@ impl ColorPair {
     #[wasm_bindgen(constructor)]
     pub fn new(front: Color, back: Color) -> Self {
         Self { front, back }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
+#[serde(remote = "cursive_core::theme::Effect")]
+#[wasm_bindgen]
+pub enum Effect {
+    Simple,
+    Reverse,
+    Dim,
+    Bold,
+    Italic,
+    Strikethrough,
+    Underline,
+    Blink,
+}
+
+impl From<Effect> for cursive_core::theme::Effect {
+    fn from(effect: Effect) -> Self {
+        match effect {
+            Effect::Simple => cursive_core::theme::Effect::Simple,
+            Effect::Reverse => cursive_core::theme::Effect::Reverse,
+            Effect::Dim => cursive_core::theme::Effect::Dim,
+            Effect::Bold => cursive_core::theme::Effect::Bold,
+            Effect::Italic => cursive_core::theme::Effect::Italic,
+            Effect::Strikethrough => cursive_core::theme::Effect::Strikethrough,
+            Effect::Underline => cursive_core::theme::Effect::Underline,
+            Effect::Blink => cursive_core::theme::Effect::Blink,
+        }
+    }
+}
+
+impl From<cursive_core::theme::Effect> for Effect {
+    fn from(effect: cursive_core::theme::Effect) -> Self {
+        match effect {
+            cursive_core::theme::Effect::Simple => Effect::Simple,
+            cursive_core::theme::Effect::Reverse => Effect::Reverse,
+            cursive_core::theme::Effect::Dim => Effect::Dim,
+            cursive_core::theme::Effect::Bold => Effect::Bold,
+            cursive_core::theme::Effect::Italic => Effect::Italic,
+            cursive_core::theme::Effect::Strikethrough => Effect::Strikethrough,
+            cursive_core::theme::Effect::Underline => Effect::Underline,
+            cursive_core::theme::Effect::Blink => Effect::Blink,
+        }
     }
 }

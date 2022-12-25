@@ -4,6 +4,7 @@ import {
   ColorPair,
   Cursive,
   CursiveBackend,
+  Effect,
   Vec2,
 } from "../../pkg/cursive_wasm.js";
 
@@ -53,6 +54,10 @@ class CursiveBackendImpl implements CursiveBackend {
       `CursiveBackendImpl: setColor(${color.front.r}, ${color.front.g}, ${color.front.b}, ${color.back.r}, ${color.back.g}, ${color.back.b})`,
     );
     return color;
+  }
+
+  setEffect(effect: Effect): void {
+    console.log(`CursiveBackendImpl: setEffect(${Effect[effect]})`);
   }
 }
 
