@@ -1,5 +1,10 @@
 // @deno-types="../../pkg/cursive_wasm.d.ts"
-import { Cursive, CursiveBackend, Vec2 } from "../../pkg/cursive_wasm.js";
+import {
+  Color,
+  Cursive,
+  CursiveBackend,
+  Vec2,
+} from "../../pkg/cursive_wasm.js";
 
 class CursiveBackendImpl implements CursiveBackend {
   print(s: string): void {
@@ -34,6 +39,10 @@ class CursiveBackendImpl implements CursiveBackend {
 
   printAt(pos: Vec2, text: string): void {
     console.log(`CursiveBackendImpl: printAt(${pos.x}, ${pos.y}, ${text})`);
+  }
+
+  clear(color: Color): void {
+    console.log(`CursiveBackendImpl: clear(${color.r}, ${color.g}, ${color.b})`);
   }
 }
 

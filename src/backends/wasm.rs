@@ -17,6 +17,7 @@ interface CursiveBackend {
     setTitle(title: string): void;
     refresh(): void;
     printAt(pos: Vec2, s: string): void;
+    clear(color: Color): void;
 }
 "#;
 
@@ -52,11 +53,14 @@ extern "C" {
     #[wasm_bindgen(method, js_name = "setTitle")]
     pub fn set_title(this: &CursiveBackend, title: &str);
 
-    #[wasm_bindgen(method)]
+    #[wasm_bindgen(method, js_name = "refresh")]
     pub fn refresh(this: &CursiveBackend);
 
     #[wasm_bindgen(method, js_name = "printAt")]
     pub fn print_at(this: &CursiveBackend, pos: Vec2, text: &str);
+
+    #[wasm_bindgen(method, js_name = "clear")]
+    pub fn clear(this: &CursiveBackend, color: Color);
 }
 
 #[wasm_bindgen]
@@ -96,6 +100,11 @@ impl Cursive {
         self.backend.set_title("New title!");
         self.backend.refresh();
         self.backend.print_at(Vec2 { x: 0, y: 0 }, "Hello, world!");
+        self.backend.clear(Color {
+            r: 10,
+            g: 20,
+            b: 30,
+        });
     }
 }
 
@@ -138,8 +147,8 @@ impl cursive_core::backend::Backend for Cursive {
         self.backend.print_at(pos.into(), text);
     }
 
-    fn clear(&self, _color: cursive_core::theme::Color) {
-        unimplemented!()
+    fn clear(&self, color: cursive_core::theme::Color) {
+        self.backend.clear(color.into());
     }
 
     fn set_color(&self, _color: cursive_core::theme::ColorPair) -> cursive_core::theme::ColorPair {
@@ -178,11 +187,41 @@ impl From<cursive_core::Vec2> for Vec2 {
     }
 }
 
-// SerializableVec2 constructor
 #[wasm_bindgen]
 impl Vec2 {
     #[wasm_bindgen(constructor)]
     pub fn new(x: usize, y: usize) -> Self {
         Self { x, y }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+#[wasm_bindgen]
+pub struct Color {
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+}
+
+impl From<Color> for cursive_core::theme::Color {
+    fn from(color: Color) -> Self {
+        cursive_core::theme::Color::Rgb(color.r, color.g, color.b)
+    }
+}
+
+impl From<cursive_core::theme::Color> for Color {
+    fn from(color: cursive_core::theme::Color) -> Self {
+        match color {
+            cursive_core::theme::Color::Rgb(r, g, b) => Color { r, g, b },
+            _ => Color { r: 0, g: 0, b: 0 },
+        }
+    }
+}
+
+#[wasm_bindgen]
+impl Color {
+    #[wasm_bindgen(constructor)]
+    pub fn new(r: u8, g: u8, b: u8) -> Self {
+        Self { r, g, b }
     }
 }
