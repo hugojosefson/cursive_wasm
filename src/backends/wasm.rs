@@ -49,6 +49,9 @@ extern "C" {
 
     #[wasm_bindgen(method, js_name = "setTitle")]
     pub fn set_title(this: &CursiveBackend, title: &str);
+
+    #[wasm_bindgen(method)]
+    pub fn refresh(this: &CursiveBackend);
 }
 
 #[wasm_bindgen]
@@ -86,6 +89,7 @@ impl Cursive {
     #[wasm_bindgen(js_name = "callMe")]
     pub fn call_me(&self) {
         self.backend.set_title("New title!");
+        self.backend.refresh();
     }
 }
 
@@ -121,7 +125,7 @@ impl cursive_core::backend::Backend for Cursive {
     }
 
     fn refresh(&mut self) {
-        unimplemented!()
+        self.backend.refresh();
     }
 
     fn print_at(&self, _pos: cursive_core::Vec2, _text: &str) {

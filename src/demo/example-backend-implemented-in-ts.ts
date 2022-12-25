@@ -27,6 +27,10 @@ class CursiveBackendImpl implements CursiveBackend {
   setTitle(title: string): void {
     console.log(`CursiveBackendImpl: setTitle(${title})`);
   }
+
+  refresh(): void {
+    console.log(`CursiveBackendImpl: refresh()`);
+  }
 }
 
 const backend: CursiveBackend = new CursiveBackendImpl();
