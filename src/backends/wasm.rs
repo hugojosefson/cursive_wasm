@@ -18,6 +18,7 @@ interface CursiveBackend {
     refresh(): void;
     printAt(pos: Vec2, s: string): void;
     clear(color: Color): void;
+    setColor(color: ColorPair): ColorPair;
 }
 "#;
 
@@ -61,6 +62,9 @@ extern "C" {
 
     #[wasm_bindgen(method, js_name = "clear")]
     pub fn clear(this: &CursiveBackend, color: Color);
+
+    #[wasm_bindgen(method, js_name = "setColor")]
+    pub fn set_color(this: &CursiveBackend, colorPair: ColorPair) -> ColorPair;
 }
 
 #[wasm_bindgen]
@@ -104,6 +108,18 @@ impl Cursive {
             r: 10,
             g: 20,
             b: 30,
+        });
+        self.backend.set_color(ColorPair {
+            front: Color {
+                r: 10,
+                g: 20,
+                b: 30,
+            },
+            back: Color {
+                r: 40,
+                g: 50,
+                b: 60,
+            },
         });
     }
 }
@@ -151,8 +167,8 @@ impl cursive_core::backend::Backend for Cursive {
         self.backend.clear(color.into());
     }
 
-    fn set_color(&self, _color: cursive_core::theme::ColorPair) -> cursive_core::theme::ColorPair {
-        unimplemented!()
+    fn set_color(&self, color: cursive_core::theme::ColorPair) -> cursive_core::theme::ColorPair {
+        self.backend.set_color(color.into()).into()
     }
 
     fn set_effect(&self, _effect: cursive_core::theme::Effect) {
@@ -195,7 +211,7 @@ impl Vec2 {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
 #[wasm_bindgen]
 pub struct Color {
     pub r: u8,
@@ -223,5 +239,38 @@ impl Color {
     #[wasm_bindgen(constructor)]
     pub fn new(r: u8, g: u8, b: u8) -> Self {
         Self { r, g, b }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
+#[wasm_bindgen]
+pub struct ColorPair {
+    pub front: Color,
+    pub back: Color,
+}
+
+impl From<ColorPair> for cursive_core::theme::ColorPair {
+    fn from(color_pair: ColorPair) -> Self {
+        cursive_core::theme::ColorPair {
+            front: color_pair.front.into(),
+            back: color_pair.back.into(),
+        }
+    }
+}
+
+impl From<cursive_core::theme::ColorPair> for ColorPair {
+    fn from(color_pair: cursive_core::theme::ColorPair) -> Self {
+        ColorPair {
+            front: color_pair.front.into(),
+            back: color_pair.back.into(),
+        }
+    }
+}
+
+#[wasm_bindgen]
+impl ColorPair {
+    #[wasm_bindgen(constructor)]
+    pub fn new(front: Color, back: Color) -> Self {
+        Self { front, back }
     }
 }

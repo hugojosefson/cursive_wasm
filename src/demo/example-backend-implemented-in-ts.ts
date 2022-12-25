@@ -1,6 +1,7 @@
 // @deno-types="../../pkg/cursive_wasm.d.ts"
 import {
   Color,
+  ColorPair,
   Cursive,
   CursiveBackend,
   Vec2,
@@ -42,7 +43,16 @@ class CursiveBackendImpl implements CursiveBackend {
   }
 
   clear(color: Color): void {
-    console.log(`CursiveBackendImpl: clear(${color.r}, ${color.g}, ${color.b})`);
+    console.log(
+      `CursiveBackendImpl: clear(${color.r}, ${color.g}, ${color.b})`,
+    );
+  }
+
+  setColor(color: ColorPair): ColorPair {
+    console.log(
+      `CursiveBackendImpl: setColor(${color.front.r}, ${color.front.g}, ${color.front.b}, ${color.back.r}, ${color.back.g}, ${color.back.b})`,
+    );
+    return color;
   }
 }
 
