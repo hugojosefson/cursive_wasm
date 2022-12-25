@@ -1,17 +1,5 @@
 use crate::utils::set_panic_hook;
-use wasm_bindgen::convert::{IntoWasmAbi, WasmAbi};
-use wasm_bindgen::describe::WasmDescribe;
 use wasm_bindgen::prelude::*;
-
-/**
- * Call this function from JavaScript with a JavaScript implementation of `CursiveBackend`, to get
- * back an instance of `Cursive` that uses your backend.
- */
-#[wasm_bindgen(js_name = "wasmCursive")]
-pub fn wasm_cursive(backend: CursiveBackend) -> WasmCursive {
-    set_panic_hook();
-    WasmCursive::new(backend)
-}
 
 /**
 * This is what is printed into the `.d.ts` file.
@@ -46,32 +34,25 @@ extern "C" {
     pub fn print(this: &CursiveBackend, s: &str);
 }
 
-pub struct WasmCursive {
-    js_backend: CursiveBackend,
+#[wasm_bindgen]
+pub struct Cursive {
+    backend: CursiveBackend,
 }
 
 /**
  * This represents the `Cursive` type that JavaScript code will use.
  */
 #[wasm_bindgen]
-impl WasmCursive {
+impl Cursive {
     #[wasm_bindgen(constructor)]
-    pub fn new(js_backend: CursiveBackend) -> Self {
-        Self { js_backend }
+    pub fn new(backend: CursiveBackend) -> Self {
+        set_panic_hook();
+        Self { backend }
+    }
+
+    #[wasm_bindgen(js_name = "printSomethingInRawMode")]
+    pub fn print_something_in_raw_mode(&self) {
+        self.backend.set_raw(true);
+        self.backend.print("Hello, world!");
     }
 }
-
-impl WasmDescribe for WasmCursive {
-    fn describe() {
-        <CursiveBackend as WasmDescribe>::describe();
-    }
-}
-
-impl IntoWasmAbi for WasmCursive {
-    type Abi = Self;
-    fn into_abi(self) -> Self::Abi {
-        self
-    }
-}
-
-unsafe impl WasmAbi for WasmCursive {}

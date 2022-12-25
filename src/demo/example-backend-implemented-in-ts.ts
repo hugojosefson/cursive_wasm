@@ -1,8 +1,5 @@
 // @deno-types="../../pkg/cursive_wasm.d.ts"
-import {
-  CursiveBackend,
-  doSomethingWithMyBackend,
-} from "../../pkg/cursive_wasm.js";
+import { Cursive, CursiveBackend } from "../../pkg/cursive_wasm.js";
 
 class CursiveBackendImpl implements CursiveBackend {
   print(s: string): void {
@@ -14,4 +11,5 @@ class CursiveBackendImpl implements CursiveBackend {
 }
 
 const backend: CursiveBackend = new CursiveBackendImpl();
-doSomethingWithMyBackend(backend);
+const wasmCursive: Cursive = new Cursive(backend);
+wasmCursive.printSomethingInRawMode();
