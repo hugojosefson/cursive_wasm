@@ -7,7 +7,29 @@ WebAssembly (WASM).
 There is no backend included, so you will need to implement your own, for the
 WASM runtime you use. I plan to do that for Deno.
 
-# Build
+## Prerequisites
+
+### Rust
+
+Install the latest version from [rustup.rs](https://rustup.rs/).
+
+I haven't checked if it works with older versions.
+
+### wasm-pack
+
+You need to install a version of `wasm-pack`, that supports `--target=deno`.
+
+Until [rustwasm/wasm-pack#1188](https://github.com/rustwasm/wasm-pack/pull/1188)
+is merged, you need to use a fork of `wasm-pack`.
+
+```sh
+cargo install \
+  --git=https://github.com/printfn/wasm-pack \
+  --branch=fix-binaryen \
+  wasm-pack
+```
+
+## Build
 
 ```bash
 make
