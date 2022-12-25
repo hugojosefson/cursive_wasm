@@ -1,6 +1,8 @@
+use crate::data::color::Color;
+use crate::data::color_pair::ColorPair;
 use crate::data::effect::Effect;
+use crate::data::vec2::Vec2;
 use crate::utils::set_panic_hook;
-use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 /**
@@ -192,100 +194,5 @@ impl cursive_core::backend::Backend for Cursive {
 
     fn unset_effect(&self, effect: cursive_core::theme::Effect) {
         self.backend.unset_effect(effect.into());
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-#[serde(remote = "cursive_core::Vec2")]
-#[wasm_bindgen(inspectable)]
-pub struct Vec2 {
-    pub x: usize,
-    pub y: usize,
-}
-
-impl From<Vec2> for cursive_core::Vec2 {
-    fn from(vec2: Vec2) -> Self {
-        cursive_core::Vec2::new(vec2.x, vec2.y)
-    }
-}
-
-impl From<cursive_core::Vec2> for Vec2 {
-    fn from(vec2: cursive_core::Vec2) -> Self {
-        Vec2 {
-            x: vec2.x,
-            y: vec2.y,
-        }
-    }
-}
-
-#[wasm_bindgen]
-impl Vec2 {
-    #[wasm_bindgen(constructor)]
-    pub fn new(x: usize, y: usize) -> Self {
-        Self { x, y }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
-#[wasm_bindgen(inspectable)]
-pub struct Color {
-    pub r: u8,
-    pub g: u8,
-    pub b: u8,
-}
-
-impl From<Color> for cursive_core::theme::Color {
-    fn from(color: Color) -> Self {
-        cursive_core::theme::Color::Rgb(color.r, color.g, color.b)
-    }
-}
-
-impl From<cursive_core::theme::Color> for Color {
-    fn from(color: cursive_core::theme::Color) -> Self {
-        match color {
-            cursive_core::theme::Color::Rgb(r, g, b) => Color { r, g, b },
-            _ => Color { r: 0, g: 0, b: 0 },
-        }
-    }
-}
-
-#[wasm_bindgen]
-impl Color {
-    #[wasm_bindgen(constructor)]
-    pub fn new(r: u8, g: u8, b: u8) -> Self {
-        Self { r, g, b }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Copy, Clone)]
-#[wasm_bindgen(inspectable)]
-pub struct ColorPair {
-    pub front: Color,
-    pub back: Color,
-}
-
-impl From<ColorPair> for cursive_core::theme::ColorPair {
-    fn from(color_pair: ColorPair) -> Self {
-        cursive_core::theme::ColorPair {
-            front: color_pair.front.into(),
-            back: color_pair.back.into(),
-        }
-    }
-}
-
-impl From<cursive_core::theme::ColorPair> for ColorPair {
-    fn from(color_pair: cursive_core::theme::ColorPair) -> Self {
-        ColorPair {
-            front: color_pair.front.into(),
-            back: color_pair.back.into(),
-        }
-    }
-}
-
-#[wasm_bindgen]
-impl ColorPair {
-    #[wasm_bindgen(constructor)]
-    pub fn new(front: Color, back: Color) -> Self {
-        Self { front, back }
     }
 }
