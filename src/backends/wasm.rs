@@ -15,6 +15,8 @@ interface CursiveBackend {
     hasColors(): boolean;
     screenSize(): Vec2;
     setTitle(title: string): void;
+    refresh(): void;
+    printAt(pos: Vec2, s: string): void;
 }
 "#;
 
@@ -52,6 +54,9 @@ extern "C" {
 
     #[wasm_bindgen(method)]
     pub fn refresh(this: &CursiveBackend);
+
+    #[wasm_bindgen(method, js_name = "printAt")]
+    pub fn print_at(this: &CursiveBackend, pos: Vec2, text: &str);
 }
 
 #[wasm_bindgen]
@@ -90,6 +95,7 @@ impl Cursive {
     pub fn call_me(&self) {
         self.backend.set_title("New title!");
         self.backend.refresh();
+        self.backend.print_at(Vec2 { x: 0, y: 0 }, "Hello, world!");
     }
 }
 
@@ -128,8 +134,8 @@ impl cursive_core::backend::Backend for Cursive {
         self.backend.refresh();
     }
 
-    fn print_at(&self, _pos: cursive_core::Vec2, _text: &str) {
-        unimplemented!()
+    fn print_at(&self, pos: cursive_core::Vec2, text: &str) {
+        self.backend.print_at(pos.into(), text);
     }
 
     fn clear(&self, _color: cursive_core::theme::Color) {

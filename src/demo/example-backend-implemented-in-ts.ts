@@ -31,6 +31,10 @@ class CursiveBackendImpl implements CursiveBackend {
   refresh(): void {
     console.log(`CursiveBackendImpl: refresh()`);
   }
+
+  printAt(pos: Vec2, text: string): void {
+    console.log(`CursiveBackendImpl: printAt(${pos.x}, ${pos.y}, ${text})`);
+  }
 }
 
 const backend: CursiveBackend = new CursiveBackendImpl();
