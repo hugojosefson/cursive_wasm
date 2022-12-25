@@ -5,6 +5,15 @@ mod utils;
 use crate::backends::wasm::CursiveBackend;
 use wasm_bindgen::prelude::*;
 
+use crate::utils::set_panic_hook;
+
+// main function
+#[wasm_bindgen(start)]
+pub fn main() -> Result<(), JsValue> {
+    set_panic_hook();
+    Ok(())
+}
+
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
@@ -12,14 +21,6 @@ use wasm_bindgen::prelude::*;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 pub mod backends;
-
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console, js_name = log)]
-    fn console_log(s: &str);
-    #[wasm_bindgen(js_namespace = console, js_name = error)]
-    fn console_error(s: &str);
-}
 
 #[wasm_bindgen(js_name = "doSomethingWithMyBackend")]
 pub fn do_something_with_my_backend(backend: &CursiveBackend) {
