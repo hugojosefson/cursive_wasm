@@ -61,6 +61,10 @@ class CursiveBackendImpl implements CursiveBackend {
   setEffect(effect: Effect): void {
     console.log(`CursiveBackendImpl: setEffect(${Effect[effect]})`);
   }
+
+  unsetEffect(effect: Effect): void {
+    console.log(`CursiveBackendImpl: unsetEffect(${Effect[effect]})`);
+  }
 }
 
 const backend: CursiveBackend = new CursiveBackendImpl();

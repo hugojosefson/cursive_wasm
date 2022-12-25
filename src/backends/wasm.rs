@@ -20,6 +20,7 @@ interface CursiveBackend {
     clear(color: Color): void;
     setColor(color: ColorPair): ColorPair;
     setEffect(effect: Effect): void;
+    unsetEffect(effect: Effect): void;
 }
 "#;
 
@@ -70,6 +71,9 @@ extern "C" {
 
     #[wasm_bindgen(method, js_name = "setEffect")]
     pub fn set_effect(this: &CursiveBackend, effect: Effect);
+
+    #[wasm_bindgen(method, js_name = "unsetEffect")]
+    pub fn unset_effect(this: &CursiveBackend, effect: Effect);
 
 }
 
@@ -129,6 +133,8 @@ impl Cursive {
         });
         self.backend
             .set_effect(cursive_core::theme::Effect::Bold.into());
+        self.backend
+            .unset_effect(cursive_core::theme::Effect::Simple.into());
     }
 }
 
@@ -183,8 +189,8 @@ impl cursive_core::backend::Backend for Cursive {
         self.backend.set_effect(effect.into());
     }
 
-    fn unset_effect(&self, _effect: cursive_core::theme::Effect) {
-        unimplemented!()
+    fn unset_effect(&self, effect: cursive_core::theme::Effect) {
+        self.backend.unset_effect(effect.into());
     }
 }
 
