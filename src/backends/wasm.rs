@@ -190,7 +190,7 @@ impl cursive_core::backend::Backend for Cursive {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(remote = "cursive_core::Vec2")]
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 pub struct Vec2 {
     pub x: usize,
     pub y: usize,
@@ -220,7 +220,7 @@ impl Vec2 {
 }
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 pub struct Color {
     pub r: u8,
     pub g: u8,
@@ -251,7 +251,7 @@ impl Color {
 }
 
 #[derive(Serialize, Deserialize, Debug, Copy, Clone)]
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 pub struct ColorPair {
     pub front: Color,
     pub back: Color,

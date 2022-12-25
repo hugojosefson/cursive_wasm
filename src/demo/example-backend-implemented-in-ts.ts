@@ -47,12 +47,14 @@ class CursiveBackendImpl implements CursiveBackend {
     console.log(
       `CursiveBackendImpl: clear(${color.r}, ${color.g}, ${color.b})`,
     );
+    console.log(`CursiveBackendImpl: clear(${color})`);
   }
 
   setColor(color: ColorPair): ColorPair {
     console.log(
       `CursiveBackendImpl: setColor(${color.front.r}, ${color.front.g}, ${color.front.b}, ${color.back.r}, ${color.back.g}, ${color.back.b})`,
     );
+    console.log(`CursiveBackendImpl: setColor(${color})`);
     return color;
   }
 
