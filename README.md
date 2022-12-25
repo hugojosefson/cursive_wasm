@@ -15,22 +15,33 @@ Install the latest version from [rustup.rs](https://rustup.rs/).
 
 I haven't checked if it works with older versions.
 
-### wasm-pack
+### Deno
 
-You need to install a version of `wasm-pack`, that supports `--target=deno`.
+Install the latest version from [deno.land](https://deno.land/).
 
-Until [rustwasm/wasm-pack#1188](https://github.com/rustwasm/wasm-pack/pull/1188)
-is merged, you need to use a fork of `wasm-pack`.
+## make
 
-```sh
-cargo install \
-  --git=https://github.com/printfn/wasm-pack \
-  --branch=fix-binaryen \
-  wasm-pack
-```
+### build
 
-## Build
+Build the WASM module.
 
 ```bash
 make
 ```
+
+Find the WASM module in `pkg/`.
+
+### run
+
+Build and run the WASM module in Deno.
+
+```bash
+make run
+```
+
+## TODO
+
+- [ ] When
+      [rustwasm/wasm-pack#1188](https://github.com/rustwasm/wasm-pack/pull/1188)
+      is merged, update `Makefile` to use it from global installation if
+      available.

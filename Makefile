@@ -20,8 +20,11 @@ pkg/cursive_wasm_bg.wasm.d.ts: $(wildcard src/**/*) pkg/cursive_wasm.js
 pkg/mod.ts: src/mod.ts
 	sed -E 's|\.\./pkg/|./|g' < src/mod.ts > pkg/mod.ts
 
-pkg/cursive_wasm.js: Makefile Cargo.toml Cargo.lock $(wildcard src/**/*)
-	RUST_BACKTRACE=1 wasm-pack build --dev --target deno
+pkg/cursive_wasm.js: target/tools/bin/wasm-pack Makefile Cargo.toml Cargo.lock $(wildcard src/**/*)
+	RUST_BACKTRACE=1 target/tools/bin/wasm-pack build --dev --target deno
+
+target/tools/bin/wasm-pack:
+	cargo install --git=https://github.com/printfn/wasm-pack --branch=fix-binaryen --root=target/tools wasm-pack
 
 run: pkg/cursive_wasm_bg.wasm pkg/cursive_wasm.js pkg/mod.ts
 	deno run --allow-read=pkg/cursive_wasm_bg.wasm pkg/mod.ts
