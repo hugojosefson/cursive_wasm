@@ -71,10 +71,4 @@ class CursiveBackendImpl implements CursiveBackend {
 const backend: CursiveBackend = new CursiveBackendImpl();
 const wasmCursive: Cursive = Cursive.letsGo(backend);
 
-// wasmCursive.printSomethingInRawMode();
-
-// const haveColors = wasmCursive.checkMyColors();
-// console.log(`haveColors: ${haveColors}`);
-// const screenSize = wasmCursive.checkMyScreenSize();
-// console.log(`screenSize: ${screenSize.x}x${screenSize.y}`);
-// wasmCursive.callMe();
+wasmCursive.something();

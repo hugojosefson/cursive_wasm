@@ -81,21 +81,6 @@ extern "C" {
 
 }
 
-/**
-not all trait items implemented, missing: `poll_event`, `set_title`, `refresh`, `has_colors`, `screen_size`, `print_at`, `clear`, `set_color`, `set_effect`, `unset_effect` [E0046]
-missing `poll_event`, `set_title`, `refresh`, `has_colors`, `screen_size`, `print_at`, `clear`, `set_color`, `set_effect`, `unset_effect` in implementation
-Help: implement the missing item: `fn poll_event(&mut self) -> std::option::Option<cursive_core::event::Event> { todo!() }`
-Help: implement the missing item: `fn set_title(&mut self, _: std::string::String) { todo!() }`
-Help: implement the missing item: `fn refresh(&mut self) { todo!() }`
-Help: implement the missing item: `fn has_colors(&self) -> bool { todo!() }`
-Help: implement the missing item: `fn screen_size(&self) -> cursive_core::XY<usize> { todo!() }`
-Help: implement the missing item: `fn print_at(&self, _: cursive_core::XY<usize>, _: &str) { todo!() }`
-Help: implement the missing item: `fn clear(&self, _: cursive_core::theme::Color) { todo!() }`
-Help: implement the missing item: `fn set_color(&self, _: cursive_core::theme::ColorPair) -> cursive_core::theme::ColorPair { todo!() }`
-Help: implement the missing item: `fn set_effect(&self, _: cursive_core::theme::Effect) { todo!() }`
-Help: implement the missing item: `fn unset_effect(&self, _: cursive_core::theme::Effect) { todo!() }`
-*/
-
 #[wasm_bindgen]
 pub struct Cursive {
     cursive_runtime: cursive_core::Cursive,
@@ -121,6 +106,12 @@ impl Cursive {
         let lambda = || -> Box<dyn cursive_core::backend::Backend> { boxed_backend_wrapper };
         cursive_runtime.run_with(lambda);
         Cursive { cursive_runtime }
+    }
+
+    #[wasm_bindgen(method, js_name = "something")]
+    pub fn something(&mut self) {
+        self.cursive_runtime
+            .add_layer(cursive_core::views::TextView::new("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
     }
 }
 
