@@ -1,6 +1,7 @@
 use crate::data::color::Color;
 use crate::data::color_pair::ColorPair;
 use crate::data::effect::Effect;
+use crate::data::event::Event;
 use crate::data::vec2::Vec2;
 use crate::utils::set_panic_hook;
 use wasm_bindgen::prelude::*;
@@ -14,7 +15,7 @@ const CURSIVE_BACKEND: &'static str = r#"
 interface CursiveBackend {
     setRaw(raw: boolean): void;
     print(s: string): void;
-    pollEvent(): string;
+    pollEvent(): Event;
     hasColors(): boolean;
     screenSize(): Vec2;
     setTitle(title: string): void;
@@ -48,7 +49,7 @@ extern "C" {
     pub fn print(this: &CursiveBackend, s: &str);
 
     #[wasm_bindgen(method, js_name = "pollEvent")]
-    pub fn poll_event(this: &CursiveBackend) -> String;
+    pub fn poll_event(this: &CursiveBackend) -> Option<Event>;
 
     #[wasm_bindgen(method, js_name = "hasColors")]
     pub fn has_colors(this: &CursiveBackend) -> bool;
@@ -80,8 +81,28 @@ extern "C" {
 
 }
 
+/**
+not all trait items implemented, missing: `poll_event`, `set_title`, `refresh`, `has_colors`, `screen_size`, `print_at`, `clear`, `set_color`, `set_effect`, `unset_effect` [E0046]
+missing `poll_event`, `set_title`, `refresh`, `has_colors`, `screen_size`, `print_at`, `clear`, `set_color`, `set_effect`, `unset_effect` in implementation
+Help: implement the missing item: `fn poll_event(&mut self) -> std::option::Option<cursive_core::event::Event> { todo!() }`
+Help: implement the missing item: `fn set_title(&mut self, _: std::string::String) { todo!() }`
+Help: implement the missing item: `fn refresh(&mut self) { todo!() }`
+Help: implement the missing item: `fn has_colors(&self) -> bool { todo!() }`
+Help: implement the missing item: `fn screen_size(&self) -> cursive_core::XY<usize> { todo!() }`
+Help: implement the missing item: `fn print_at(&self, _: cursive_core::XY<usize>, _: &str) { todo!() }`
+Help: implement the missing item: `fn clear(&self, _: cursive_core::theme::Color) { todo!() }`
+Help: implement the missing item: `fn set_color(&self, _: cursive_core::theme::ColorPair) -> cursive_core::theme::ColorPair { todo!() }`
+Help: implement the missing item: `fn set_effect(&self, _: cursive_core::theme::Effect) { todo!() }`
+Help: implement the missing item: `fn unset_effect(&self, _: cursive_core::theme::Effect) { todo!() }`
+*/
+
 #[wasm_bindgen]
 pub struct Cursive {
+    cursive_runtime: cursive_core::Cursive,
+}
+
+#[wasm_bindgen]
+pub struct CursiveBackendWrapper {
     backend: CursiveBackend,
 }
 
@@ -90,67 +111,23 @@ pub struct Cursive {
  */
 #[wasm_bindgen]
 impl Cursive {
-    #[wasm_bindgen(constructor)]
-    pub fn new(backend: CursiveBackend) -> Self {
+    #[wasm_bindgen(js_name = "letsGo")]
+    pub fn lets_go(backend: CursiveBackend) -> Self {
         set_panic_hook();
-        Self { backend }
-    }
-
-    #[wasm_bindgen(js_name = "printSomethingInRawMode")]
-    pub fn print_something_in_raw_mode(&self) {
-        self.backend.set_raw(true);
-        self.backend.print("Hello, world!");
-    }
-
-    #[wasm_bindgen(js_name = "checkMyColors")]
-    pub fn check_my_colors(&self) -> bool {
-        self.backend.has_colors()
-    }
-
-    #[wasm_bindgen(js_name = "checkMyScreenSize")]
-    pub fn check_my_screen_size(&self) -> Vec2 {
-        self.backend.screen_size()
-    }
-
-    #[wasm_bindgen(js_name = "callMe")]
-    pub fn call_me(&self) {
-        self.backend.set_title("New title!");
-        self.backend.refresh();
-        self.backend.print_at(Vec2 { x: 0, y: 0 }, "Hello, world!");
-        self.backend.clear(Color {
-            r: 10,
-            g: 20,
-            b: 30,
-        });
-        self.backend.set_color(ColorPair {
-            front: Color {
-                r: 10,
-                g: 20,
-                b: 30,
-            },
-            back: Color {
-                r: 40,
-                g: 50,
-                b: 60,
-            },
-        });
-        self.backend
-            .set_effect(cursive_core::theme::Effect::Bold.into());
-        self.backend
-            .unset_effect(cursive_core::theme::Effect::Simple.into());
-    }
-}
-
-impl Drop for Cursive {
-    fn drop(&mut self) {
-        self.backend.print("Goodbye, world!");
+        let mut cursive_runtime = cursive_core::Cursive::new();
+        let cursive_backend_wrapper = CursiveBackendWrapper { backend };
+        let boxed_backend_wrapper: Box<dyn cursive_core::backend::Backend> =
+            Box::new(cursive_backend_wrapper);
+        let lambda = || -> Box<dyn cursive_core::backend::Backend> { boxed_backend_wrapper };
+        cursive_runtime.run_with(lambda);
+        Cursive { cursive_runtime }
     }
 }
 
 /**
  * cursive_core will call here, and we should forward the call to the JavaScript implementation of CursiveBackend.
  */
-impl cursive_core::backend::Backend for Cursive {
+impl cursive_core::backend::Backend for CursiveBackendWrapper {
     fn has_colors(&self) -> bool {
         self.backend.has_colors()
     }
@@ -160,12 +137,7 @@ impl cursive_core::backend::Backend for Cursive {
     }
 
     fn poll_event(&mut self) -> Option<cursive_core::event::Event> {
-        let event = self.backend.poll_event();
-        match event.as_str() {
-            "quit" => Some(cursive_core::event::Event::Exit),
-            "SOME_EVENT" => Some(cursive_core::event::Event::Refresh),
-            _ => None,
-        }
+        self.backend.poll_event().map(|e| e.into())
     }
 
     fn set_title(&mut self, title: String) {

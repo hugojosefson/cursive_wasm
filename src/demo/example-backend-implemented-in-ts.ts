@@ -5,6 +5,7 @@ import {
   Cursive,
   CursiveBackend,
   Effect,
+  Event,
   Vec2,
 } from "../../pkg/cursive_wasm.js";
 
@@ -22,9 +23,9 @@ class CursiveBackendImpl implements CursiveBackend {
     return true;
   }
 
-  pollEvent(): string {
+  pollEvent(): Event {
     console.log(`CursiveBackendImpl: pollEvent()`);
-    return "SOME_EVENT";
+    return Event.Exit;
   }
 
   screenSize(): Vec2 {
@@ -68,12 +69,12 @@ class CursiveBackendImpl implements CursiveBackend {
 }
 
 const backend: CursiveBackend = new CursiveBackendImpl();
-const wasmCursive: Cursive = new Cursive(backend);
+const wasmCursive: Cursive = Cursive.letsGo(backend);
 
-wasmCursive.printSomethingInRawMode();
+// wasmCursive.printSomethingInRawMode();
 
-const haveColors = wasmCursive.checkMyColors();
-console.log(`haveColors: ${haveColors}`);
-const screenSize = wasmCursive.checkMyScreenSize();
-console.log(`screenSize: ${screenSize.x}x${screenSize.y}`);
-wasmCursive.callMe();
+// const haveColors = wasmCursive.checkMyColors();
+// console.log(`haveColors: ${haveColors}`);
+// const screenSize = wasmCursive.checkMyScreenSize();
+// console.log(`screenSize: ${screenSize.x}x${screenSize.y}`);
+// wasmCursive.callMe();
